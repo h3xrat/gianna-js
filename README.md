@@ -10,4 +10,8 @@ go run main.go --domain https://example.com
 
 ## TODO
 [DOING] - Multiple URLs from a file
+##
 [] - BETTER OUTPUT
+##
+[] - Grep sensitive information like, api-keys, amazon-url etc.. 
+##
