@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
 )
 
 //HTTPHandler struct to handler http requests
@@ -15,9 +16,21 @@ type HTTPHandler struct {
 	URL string
 }
 
+func parseResult(mapDomains map[string][]string) {
+	for k, v := range mapDomains {
+		color.Cyan("############################################################")
+		color.Magenta("[+] DOMAIN: %s", k)
+		for _, u := range v {
+			color.Yellow("[+] JS FOUND: %s", u)
+		}
+	}
+	color.Cyan("############################################################")
+}
+
 //SendRequest sending request to a domain
 func (g *HTTPHandler) SendRequest() {
 	domain := g.URL
+
 	client := &http.Client{
 		Timeout: time.Second * 5,
 	}
@@ -34,11 +47,12 @@ func (g *HTTPHandler) SendRequest() {
 	}
 	defer response.Body.Close()
 
-	ParserDomain(response)
+	ParserDomain(response, domain)
 }
 
 //ParserDomain get all js files from a give domain
-func ParserDomain(bodyDomain *http.Response) {
+func ParserDomain(bodyDomain *http.Response, domain string) {
+	var mapDomains = make(map[string][]string)
 	doc, err := goquery.NewDocumentFromReader(bodyDomain.Body)
 	if err != nil {
 		fmt.Println("[+] Erro get information from ", bodyDomain.Request)
@@ -47,8 +61,15 @@ func ParserDomain(bodyDomain *http.Response) {
 		js, _ := s.Attr("src")
 		if js != "" {
 			if strings.HasPrefix(js, "http://") || strings.HasPrefix(js, "https://") || strings.HasPrefix(js, "//") {
-				fmt.Println(js)
+				//map of domain and the urls
+				mapDomains[domain] = append(mapDomains[domain], js)
 			}
 		}
 	})
+	if len(mapDomains) <= 0 {
+		color.Red("[-] No JS FOUND ON THAT DOMAIN")
+	} else {
+		parseResult(mapDomains)
+	}
+
 }
