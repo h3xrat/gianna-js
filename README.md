@@ -3,7 +3,8 @@ Tool to get all Javascript endpoints from a domain :)
 
 
 #### usage 
-go run main.go --domain https://example.com
+1. Single domain - go run main.go --domain https://example.com
+2. Multiple domains from a file - go run main.go --wordlist urls.txt
 
 ![](https://github.com/h3xrat/gianna-js/blob/master/gianna_stats01.gif?raw=true)
 
