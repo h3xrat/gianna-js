@@ -42,12 +42,15 @@ func (g *HTTPHandler) SendRequest() {
 
 	//make request
 	response, err := client.Do(request)
-	if err != nil {
-		log.Println("[+] Erro get response from request to: ", domain)
-	}
-	defer response.Body.Close()
 
-	ParserDomain(response, domain)
+	if err != nil {
+		color.Red("[-] Error domain: %s ", domain)
+	} else {
+		defer response.Body.Close()
+		ParserDomain(response, domain)
+
+	}
+
 }
 
 //ParserDomain get all js files from a give domain
@@ -67,7 +70,7 @@ func ParserDomain(bodyDomain *http.Response, domain string) {
 		}
 	})
 	if len(mapDomains) <= 0 {
-		color.Red("[-] No JS FOUND ON THAT DOMAIN")
+		color.Red("[-] No JS FOUND ON THAT DOMAIN: %s", domain)
 	} else {
 		parseResult(mapDomains)
 	}
